@@ -60,8 +60,8 @@ RealityNote is a comprehensive web application that combines note-taking, task m
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/reality-note.git
-cd reality-note
+git clone https://github.com/yaswanth33-ui/RealityNote.git
+cd RealityNote
 ```
 
 2. Install dependencies:
@@ -176,3 +176,11 @@ docker run -p 8080:80 reality-note
 - Data encryption in transit and at rest
 - Regular security updates
 - Input validation and sanitization
+
+## Online Site
+- https://yaswanth33-ui.github.io/RealityNote
+
+## License 
+- This project is licensed under the Apache License Version 2.0. See the LICENSE file for more details.
+
+Contact For any inquiries or support, please reach out at yaswanthreddypanem@gmail.com .
