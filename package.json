@@ -16,7 +16,12 @@
     "clean": "rimraf dist",
     "validate:env": "node scripts/validate-env.js",
     "predev": "npm run validate:env",
-    "prebuild": "npm run validate:env"
+    "prebuild": "npm run validate:env",
+    "predeploy": "npm run build",
+    "deploy": "npm run build && gh-pages -d dist",
+    "deploy:win": ".\\scripts\\deploy.bat",
+    "deploy:unix": "./scripts/deploy.sh",
+    "deploy:manual": "git add . && git commit -m \"Deploy update\" && git push origin main"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -68,8 +73,8 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.3",
-    "zod": "^3.23.8",
-    "web-vitals": "^3.0.0"
+    "web-vitals": "^3.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
@@ -82,13 +87,14 @@
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
+    "gh-pages": "^6.3.0",
     "globals": "^15.9.0",
     "postcss": "^8.4.47",
+    "rimraf": "^5.0.0",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
-    "rimraf": "^5.0.0",
     "vite-bundle-analyzer": "^0.8.0",
     "vite-plugin-pwa": "^0.19.0"
   }
