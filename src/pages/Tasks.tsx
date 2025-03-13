@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { PageContainer, PageSection, PageTitle } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,11 @@ export default function Tasks() {
   const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high">("medium");
   
   const handleTaskChange = (updatedTask: Task) => {
+    if (updatedTask.deleted) {
+      deleteTask(updatedTask.id);
+      return;
+    }
+    
     updateTask(updatedTask.id, {
       title: updatedTask.title,
       completed: updatedTask.completed,
@@ -129,6 +133,7 @@ export default function Tasks() {
               <TaskList 
                 tasks={tasks} 
                 onTaskChange={handleTaskChange}
+                onDelete={deleteTask}
                 title="All Tasks"
               />
             ) : (

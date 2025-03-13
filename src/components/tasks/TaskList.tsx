@@ -1,5 +1,4 @@
-
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { GlassCard } from "../ui/GlassMorphism";
 import { Task, TaskItem } from "./TaskItem";
@@ -9,10 +8,11 @@ interface TaskListProps {
   tasks: Task[];
   onTaskChange: (updatedTask: Task) => void;
   onAddTask?: () => void;
+  onDelete: (id: string) => void;
   title?: string;
 }
 
-export function TaskList({ tasks, onTaskChange, onAddTask, title }: TaskListProps) {
+export function TaskList({ tasks, onTaskChange, onAddTask, onDelete, title }: TaskListProps) {
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   
   const filteredTasks = tasks.filter((task) => {
@@ -66,11 +66,38 @@ export function TaskList({ tasks, onTaskChange, onAddTask, title }: TaskListProp
       <div className="divide-y divide-reality-100 dark:divide-reality-800">
         {filteredTasks.length > 0 ? (
           filteredTasks.map((task) => (
-            <TaskItem
+            <div
               key={task.id}
-              task={task}
-              onChange={onTaskChange}
-            />
+              className="flex items-center justify-between p-3 rounded-lg hover:bg-reality-50 dark:hover:bg-reality-800/50 transition-colors group"
+            >
+              <div className="flex items-center flex-1">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => onTaskChange({ ...task, completed: !task.completed })}
+                  className="mr-3"
+                />
+                <span className={task.completed ? "line-through text-reality-400" : ""}>
+                  {task.title}
+                </span>
+                <span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
+                  task.priority === 'high' 
+                    ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                    : task.priority === 'medium'
+                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                    : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                }`}>
+                  {task.priority}
+                </span>
+              </div>
+              <button
+                onClick={() => onDelete(task.id)}
+                className="p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-reality-100 dark:hover:bg-reality-800 transition-all"
+                aria-label="Delete task"
+              >
+                <Trash2 className="w-4 h-4 text-reality-500 hover:text-reality-700" />
+              </button>
+            </div>
           ))
         ) : (
           <div className="py-4 text-center text-reality-500 text-sm">
