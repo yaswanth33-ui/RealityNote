@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Edit2 } from "lucide-react";
 import { useState } from "react";
 import { GlassCard } from "../ui/GlassMorphism";
 import { Task, TaskItem } from "./TaskItem";
@@ -9,10 +9,11 @@ interface TaskListProps {
   onTaskChange: (updatedTask: Task) => void;
   onAddTask?: () => void;
   onDelete: (id: string) => void;
+  onEdit: (task: Task) => void;
   title?: string;
 }
 
-export function TaskList({ tasks, onTaskChange, onAddTask, onDelete, title }: TaskListProps) {
+export function TaskList({ tasks, onTaskChange, onAddTask, onDelete, onEdit, title }: TaskListProps) {
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   
   const filteredTasks = tasks.filter((task) => {
@@ -90,13 +91,24 @@ export function TaskList({ tasks, onTaskChange, onAddTask, onDelete, title }: Ta
                   {task.priority}
                 </span>
               </div>
-              <button
-                onClick={() => onDelete(task.id)}
-                className="p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-reality-100 dark:hover:bg-reality-800 transition-all"
-                aria-label="Delete task"
-              >
-                <Trash2 className="w-4 h-4 text-reality-500 hover:text-reality-700" />
-              </button>
+              <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-all">
+                {!task.completed && (
+                  <button
+                    onClick={() => onEdit(task)}
+                    className="p-1 rounded-full hover:bg-reality-100 dark:hover:bg-reality-800 transition-all"
+                    aria-label="Edit task"
+                  >
+                    <Edit2 className="w-4 h-4 text-reality-500 hover:text-reality-700" />
+                  </button>
+                )}
+                <button
+                  onClick={() => onDelete(task.id)}
+                  className="p-1 rounded-full hover:bg-reality-100 dark:hover:bg-reality-800 transition-all"
+                  aria-label="Delete task"
+                >
+                  <Trash2 className="w-4 h-4 text-reality-500 hover:text-reality-700" />
+                </button>
+              </div>
             </div>
           ))
         ) : (

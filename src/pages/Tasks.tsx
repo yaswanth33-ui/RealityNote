@@ -3,7 +3,7 @@ import { PageContainer, PageSection, PageTitle } from "@/components/layout/PageC
 import { Button } from "@/components/ui/button";
 import { GlassPanel } from "@/components/ui/GlassMorphism";
 import { TransitionEffect } from "@/components/ui/TransitionEffect";
-import { Loader2, Plus, X } from "lucide-react";
+import { Edit2, Loader2, Plus, X } from "lucide-react";
 import { TaskList } from "@/components/tasks/TaskList";
 import { useTasks, Task } from "@/hooks/useTasks";
 
@@ -12,10 +12,13 @@ export default function Tasks() {
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high">("medium");
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   
   const handleTaskChange = (updatedTask: Task) => {
     if (updatedTask.deleted) {
       deleteTask(updatedTask.id);
+      setEditingTaskId(null);
       return;
     }
     
@@ -25,6 +28,17 @@ export default function Tasks() {
       priority: updatedTask.priority,
       due_date: updatedTask.due_date
     });
+    setEditingTaskId(null);
+  };
+
+  const handlePriorityChange = (taskId: string, newPriority: "low" | "medium" | "high") => {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      handleTaskChange({
+        ...task,
+        priority: newPriority
+      });
+    }
   };
   
   const handleAddTask = () => {
@@ -39,6 +53,19 @@ export default function Tasks() {
     
     setNewTaskTitle("");
     setShowAddTask(false);
+  };
+
+  const handleEditStart = (task: Task) => {
+    setEditingTask(task);
+  };
+
+  const handleEditCancel = () => {
+    setEditingTask(null);
+  };
+
+  const handleEditSave = (task: Task) => {
+    handleTaskChange(task);
+    setEditingTask(null);
   };
   
   return (
@@ -130,12 +157,74 @@ export default function Tasks() {
           
           <PageSection>
             {tasks.length > 0 ? (
-              <TaskList 
-                tasks={tasks} 
-                onTaskChange={handleTaskChange}
-                onDelete={deleteTask}
-                title="All Tasks"
-              />
+              <>
+                {editingTask ? (
+                  <TransitionEffect type="scale" className="mb-6">
+                    <GlassPanel className="p-4">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="font-medium">Edit Task</h3>
+                        <button 
+                          onClick={handleEditCancel}
+                          className="p-1 rounded-full hover:bg-reality-100 dark:hover:bg-reality-800 transition-colors"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <input
+                          type="text"
+                          value={editingTask.title}
+                          onChange={(e) => setEditingTask({...editingTask, title: e.target.value})}
+                          className="w-full p-2 bg-white/50 dark:bg-reality-800/50 border border-reality-200 dark:border-reality-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-reality-300 dark:focus:ring-reality-600 transition-all"
+                          autoFocus
+                        />
+                      </div>
+                      
+                      <div className="mb-4">
+                        <label className="block text-sm text-reality-600 dark:text-reality-400 mb-2">
+                          Priority
+                        </label>
+                        <div className="flex space-x-2">
+                          {(["low", "medium", "high"] as const).map((priority) => (
+                            <button
+                              key={priority}
+                              className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                                editingTask.priority === priority
+                                  ? "bg-reality-100 dark:bg-reality-800 text-reality-900 dark:text-white"
+                                  : "text-reality-600 dark:text-reality-400 hover:bg-reality-50 dark:hover:bg-reality-800/50"
+                              }`}
+                              onClick={() => setEditingTask({...editingTask, priority})}
+                            >
+                              {priority.charAt(0).toUpperCase() + priority.slice(1)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="outline" onClick={handleEditCancel}>
+                          Cancel
+                        </Button>
+                        <Button 
+                          onClick={() => handleEditSave(editingTask)}
+                          disabled={!editingTask.title.trim()}
+                        >
+                          Save Changes
+                        </Button>
+                      </div>
+                    </GlassPanel>
+                  </TransitionEffect>
+                ) : null}
+                
+                <TaskList 
+                  tasks={tasks} 
+                  onTaskChange={handleTaskChange}
+                  onDelete={deleteTask}
+                  onEdit={handleEditStart}
+                  title="All Tasks"
+                />
+              </>
             ) : (
               <TransitionEffect type="fade">
                 <div className="text-center py-12">
